@@ -42,7 +42,7 @@ dist/
 
 草图默认保存在当前浏览器的本地存储中，不会上传到服务器。需要跨浏览器或跨设备继续编辑时，请使用“保存文件”导出 JSON 草图。
 
-## 图标
+## 许可
 
-内置图标来自 [Lucide](https://lucide.dev/)，许可内容见 `dist/ICON-LICENSE.txt`。
+项目代码采用 [MIT License](LICENSE)。内置图标来自 [Lucide](https://lucide.dev/)，图标许可内容见 `dist/ICON-LICENSE.txt`。
 
