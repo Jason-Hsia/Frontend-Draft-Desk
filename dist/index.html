@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000"><meta name="description" content="把脑中的网页画出来。拖放组件、调整排版，再把草图交给 AI。">
+  <title>草图桌 · 前端排版编辑器</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23202630'/%3E%3Cpath d='M8 8h16v16H8zM8 14h16M14 14v10' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header">
+  <a class="brand" href="#" aria-label="草图桌首页"><span class="brand-mark"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 10v10"/></svg></span><span>草图桌<span class="brand-en">SKETCHDESK</span></span></a>
+  <div class="document-name"><input id="doc-name" value="我的网页草图" aria-label="草图名称"><span id="save-status">已保存到此浏览器</span></div>
+  <div class="header-actions"><button id="open-file" class="quiet" title="打开草图文件">打开</button><button id="save-file" class="quiet" title="下载可继续编辑的草图文件">保存文件</button><button id="export-png" class="outlined">导出图片</button><details class="file-menu"><summary aria-label="文件操作">···</summary><div><button id="open-mobile">打开草图</button><button id="save-mobile">保存文件</button><button id="export-mobile">导出图片</button></div></details><button id="ai-brief" class="primary"><span class="spark">✦</span> 交给 AI</button></div>
+</header>
+<div class="editor">
+  <aside class="left-panel" id="left-panel">
+    <div class="panel-tabs"><button class="tab active" data-tab="components">组件</button><button class="tab" data-tab="layers">图层 <span id="layer-count">0</span></button></div>
+    <div id="components-pane" class="panel-content">
+      <div class="library-search"><input id="library-search" type="search" placeholder="搜索组件或图标…" aria-label="搜索组件或图标"></div>
+      <div class="library-filters"><button class="active" data-library-filter="all">全部</button><button data-library-filter="basic">基础</button><button data-library-filter="forms">表单</button><button data-library-filter="nav">导航</button><button data-library-filter="content">展示</button><button data-library-filter="feedback">反馈</button><button data-library-filter="icons">图标</button></div>
+      <p id="library-empty" class="property-help hidden">没有找到匹配的元素，试试其他关键词。</p>
+      <section id="basic-section"><p class="eyebrow">基础元素 <span id="basic-count"></span></p><div class="component-grid" id="basic-palette"></div></section>
+      <section id="ui-section"><p class="eyebrow section-gap">界面组件 <span id="ui-count"></span></p><div id="ui-palette"></div></section>
+      <section id="icon-section"><p class="eyebrow section-gap">常用图标 <span id="icon-count"></span></p><div class="icon-grid" id="icon-palette"></div></section>
+      <div class="palette-tip"><span>↗</span><p>点击添加，或拖入画布<br><span>双击文字即可编辑</span></p></div>
+      <div class="starter"><div class="starter-title">从一个轮廓开始</div><p>用示例找到感觉，再改成你的想法。</p><button id="load-example">载入网页示例 <span>↗</span></button><button id="new-canvas" class="blank-button">新建空白草图</button></div>
+    </div>
+    <div id="layers-pane" class="panel-content hidden"><p class="eyebrow">上方图层覆盖下方图层</p><div id="layer-list"></div></div>
+    <div class="panel-footer"><kbd>Shift</kbd> 点选多个元素 <span>·</span> <kbd>Del</kbd> 删除</div>
+  </aside>
+  <main class="workspace">
+    <div class="workspace-toolbar"><div class="toolbar-group"><button id="toggle-components" class="icon-button mobile-toggle" aria-label="显示组件库">▦</button><button id="undo" class="icon-button" aria-label="撤销" title="撤销 Ctrl+Z">↶</button><button id="redo" class="icon-button" aria-label="重做" title="重做 Ctrl+Shift+Z">↷</button><span class="toolbar-divider"></span><button id="duplicate" class="icon-button" aria-label="复制所选元素" title="复制 Ctrl+D"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></button><button id="delete" class="icon-button" aria-label="删除所选元素" title="删除 Delete"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/></svg></button></div><button id="canvas-settings" class="canvas-settings-button" aria-label="画布设置" title="修改画布宽度和高度"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 2v4M16 2v4M2 8h4M2 16h4"/></svg><span class="canvas-settings-text">画布设置</span><span id="canvas-size-label">1440 × 900</span></button><div class="toolbar-group"><button id="toggle-grid" class="toggle-button active" aria-pressed="true" title="显示网格">网格</button><button id="toggle-snap" class="toggle-button active" aria-pressed="true" title="移动时吸附到 8px 网格">吸附</button><button id="toggle-properties" class="icon-button mobile-toggle" aria-label="显示属性">☷</button></div></div>
+    <div class="viewport" id="viewport"><div class="canvas-surround" id="canvas-surround"><div class="artboard-meta"><span id="artboard-name">我的网页草图</span><span>DESKTOP</span></div><div id="artboard-wrap"><svg id="artboard" xmlns="http://www.w3.org/2000/svg" role="application" aria-label="网页草图画布，点击选择元素，拖动调整位置" tabindex="0"><defs><pattern id="canvas-grid" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="0" cy="0" r="0.65" fill="#dce0e7"/></pattern></defs><rect id="canvas-bg" width="100%" height="100%" fill="#ffffff"/><rect id="grid-bg" width="100%" height="100%" fill="url(#canvas-grid)"/><g id="objects"></g><g id="selection"></g></svg><textarea id="inline-text" aria-label="编辑画布文字" spellcheck="false" class="hidden"></textarea></div><div class="canvas-end"><button id="extend-canvas">＋ 延长画布 1000px</button></div></div></div>
+    <div class="canvas-bottom"><span id="selection-status">点击元素开始编辑</span><div class="zoom-controls"><button id="zoom-out" aria-label="缩小">−</button><button id="zoom-fit" title="查看整张画布">适应</button><button id="zoom-width" title="适应宽度，纵向滚动编辑长网页">适宽</button><span id="zoom-label">60%</span><button id="zoom-in" aria-label="放大">＋</button></div><span class="bottom-hint">方向键微调 · Ctrl / ⌘ + Z 撤销</span></div>
+  </main>
+  <aside class="right-panel" id="right-panel">
+    <div class="properties-heading"><span>属性</span><span id="property-type" class="type-chip">画布</span></div>
+    <div id="properties" class="panel-content"></div>
+    <div class="right-note"><span class="note-icon">✦</span><p>先把位置画对，<br>再慢慢补上细节。</p></div>
+  </aside>
+</div>
+<div id="toast" role="status" class="toast hidden"></div>
+<input type="file" id="file-input" accept=".json,application/json" hidden>
+<dialog id="canvas-dialog"><form id="canvas-size-form"><div class="dialog-heading"><div><p class="eyebrow">网页画布</p><h2>设置画布尺寸</h2></div><button id="close-canvas" type="button" class="icon-button" aria-label="关闭画布设置">×</button></div><div class="field-grid canvas-dimensions"><label class="field"><span>宽度（px）</span><input id="canvas-width" type="number" min="320" max="4096" step="1" required aria-label="画布宽度"></label><label class="field"><span>高度（px）</span><input id="canvas-height" type="number" min="240" max="20000" step="1" required aria-label="画布高度"></label></div><div class="canvas-presets"><button type="button" data-canvas-preset="desktop">桌面 1440 × 900</button><button type="button" data-canvas-preset="mobile">手机 390 × 844</button><button type="button" data-canvas-preset="long">长网页 1440 × 6000</button></div><button type="button" id="add-height" class="outlined" style="margin-top:16px">高度增加 1000px</button><p class="property-help">支持最高 20000px。加高后可以纵向滚动编辑。<br>尺寸修改不会移动元素；缩小后，超出画布的内容暂时隐藏，扩大后恢复。</p><div class="dialog-footer"><button type="button" id="cancel-canvas" class="outlined">取消</button><button type="submit" class="primary">应用尺寸</button></div></form></dialog>
+<dialog id="brief-dialog"><div class="dialog-heading"><div><p class="eyebrow">从草图到网页</p><h2>把你的想法交给 AI</h2></div><button id="close-brief" class="icon-button" aria-label="关闭">×</button></div><p class="dialog-description">同时提供导出的草图图片和下面这段说明，让智能体按照你的布局实现。</p><textarea id="brief-text" aria-label="给 AI 的布局说明"></textarea><div class="dialog-footer"><button id="brief-image" class="outlined">导出草图图片</button><button id="copy-brief" class="primary">复制布局说明</button></div></dialog>
+<dialog id="confirm-dialog"><h2 id="confirm-title">新建空白草图？</h2><p>当前内容将被替换。你可以先保存文件，替换后也可以撤销。</p><div class="dialog-footer"><button id="cancel-confirm" class="outlined">取消</button><button id="accept-confirm" class="primary">确认替换</button></div></dialog>
+<script src="component-library.js"></script><script src="icon-library.js"></script><script src="component-renderer.js"></script><script src="app.js"></script>
+</body></html>
